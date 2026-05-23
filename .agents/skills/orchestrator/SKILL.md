@@ -30,11 +30,11 @@ Mọi task phức tạp đều phải được phân rã thành **bước nguyê
 
 ```
 Task: "Làm feature login"
-→ [1] Planner: Phân tích yêu cầu, xác định files ảnh hưởng
-→ [2] Researcher: Tìm pattern auth hiện tại trong codebase
-→ [3] Architect: Thiết kế API contract (nếu phức tạp)
-→ [4] Coder: Implement theo plan
-→ [5] Reviewer: Review code
+→ [1] Product Manager: Phân tích yêu cầu, định nghĩa User Stories và Acceptance Criteria
+→ [2] Analyst: Đọc repomap, quét codebase, gom context
+→ [3] Architect: Thiết kế hệ thống, API contract
+→ [4] Coder: Implement theo thiết kế
+→ [5] Reviewer: Review code (Spec -> Quality)
 → [6] Tester: Viết và chạy test
 ```
 
@@ -52,10 +52,10 @@ Task: "Làm feature login"
 | Task Scale | Pipeline phù hợp |
 |-----------|-----------------|
 | Fix typo / bug nhỏ | Debugger only |
-| Thêm function đơn giản | Coder → Tester |
-| Thêm feature mới | Planner → Coder → Reviewer → Tester |
-| Feature phức tạp / module mới | Planner → Researcher → Architect → Coder → Reviewer → Tester |
-| Refactor toàn bộ module | Researcher → Architect → Coder → Reviewer → Tester (lặp nhiều vòng) |
+| Thêm function đơn giản | Analyst → Coder → Tester |
+| Thêm feature mới | PM → Analyst → Coder → Reviewer → Tester |
+| Feature phức tạp / module mới | PM → Analyst → Architect → Coder → Reviewer → Tester |
+| Refactor toàn bộ module | Analyst → Architect → Coder → Reviewer → Tester (Lặp nhiều vòng) |
 
 ---
 
@@ -65,13 +65,14 @@ Không phân công theo keyword, phân công theo **bản chất của task**:
 
 | Cần gì? | Role phù hợp |
 |---------|-------------|
-| Hiểu yêu cầu, tạo plan | Planner |
-| Nghiên cứu codebase, tìm patterns | Researcher |
+| Yêu cầu nghiệp vụ, User Stories | Product Manager (PM) |
+| Nghiên cứu codebase, tạo Plan | Analyst |
 | Thiết kế system, API contracts, ADR | Architect |
 | Viết code chất lượng cao | Coder |
 | Review quality/security | Reviewer |
 | Viết và chạy tests | Tester |
 | Fix bug, phân tích lỗi | Debugger |
+| Xử lý CI/CD, Docker, Metrics | DevOps |
 
 > ⚠️ Bug phức tạp có thể cần Architect → Debugger, không chỉ Debugger
 
@@ -137,7 +138,8 @@ Sau khi fix một bug khó hoặc hoàn thành một feature quan trọng, Orche
 ## Pipeline Chuẩn
 
 ```
-[ANALYST]     → Tạo requirements & plan (lưu vào docs/ai/requirements/ và docs/ai/planning/)
+[PRODUCT MANAGER]→ Viết PRD, định nghĩa User Stories (lưu vào docs/ai/requirements/)
+[ANALYST]     → Tạo technical plan, quét codebase (lưu vào docs/ai/planning/)
 [ARCHITECT]   → Thiết kế solution (lưu vào docs/ai/design/)
 [CODER]       → Viết code theo plan
 [REVIEWER]    → Review Spec Compliance -> Quality
