@@ -1,0 +1,9 @@
+# Bản đồ Repository (Repo Map)
+# File tự động tạo để hiển thị cấu trúc project
+# Analyst agent sẽ cập nhật file này để có cái nhìn tổng quan thay vì phải dùng grep mù quáng
+#
+# Cách sử dụng: cat docs/ai/repomap.txt
+# Để tạo lại (Regenerate):
+#   bash .agents/scripts/generate_repomap.sh
+
+# --- Cấu trúc project sẽ được điền vào đây khi script chạy ---

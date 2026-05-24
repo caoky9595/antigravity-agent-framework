@@ -1,52 +1,135 @@
 # Antigravity Agent Framework 🚀
 
-**SOTA 2026 Autonomous Agentic Workflow Framework for AI Coding Assistants**
+**Framework Multi-Agent cho Trợ Lý AI Lập Trình — SOTA 2026**
 
-Antigravity Agent Framework là một cấu trúc quản lý đa đặc vụ (Multi-Agent) biến trợ lý AI của bạn từ một chatbot đơn thuần thành một nhóm kỹ sư phần mềm thực thụ. Với các nguyên tắc làm việc khắt khe (Iron Laws), khả năng tự học (Persistent Memory) và sự phân chia vai trò rõ ràng, framework này giúp bạn tự động hóa quy trình phát triển phần mềm một cách chuyên nghiệp và có thể kiểm chứng được.
-
----
-
-## 🌟 Các Tính Năng Cốt Lõi
-
-- **Đội ngũ 9 AI Agents chuyên biệt:** Tự động điều phối hoặc gọi đích danh từng role (Product Manager, Analyst, Architect, Coder, Reviewer, Tester, Debugger, DevOps, Orchestrator).
-- **Model Context Protocol (MCP) Ready:** Ưu tiên sử dụng MCP servers cho các tích hợp external API, giúp hệ thống mở rộng linh hoạt theo chuẩn công nghiệp mới nhất.
-- **Cyclic Workflow & Observability:** Hỗ trợ vòng lặp tự động (Feedback loops) khi test fail và log toàn bộ quy trình ra quyết định (Agentic Tracing).
-- **Luật Thép (Iron Laws):** Loại bỏ tình trạng "vibe coding" bằng cách bắt buộc áp dụng:
-  - **Systematic Debugging:** Không sửa code nếu chưa tìm ra Root Cause.
-  - **TDD (Test-Driven Development):** Không viết production code nếu chưa có failing test.
-  - **Verification Before Completion:** Mọi kết luận "hoàn thành" phải được minh chứng bằng kết quả chạy trên terminal.
-- **Trí Nhớ Cục Bộ (Persistent Memory):** Lưu trữ toàn bộ ngữ cảnh dự án, kiến trúc (Docs-as-Code) và bài học kinh nghiệm (Recovery Ledger) để AI không lặp lại lỗi cũ.
+Biến trợ lý AI của bạn thành một đội kỹ sư phần mềm kỷ luật với 9 vai trò chuyên biệt, luật thép không thương lượng, và bộ nhớ dài hạn.
 
 ---
 
-## 📂 Cấu Trúc Framework
+## 🌟 Tính Năng Chính
 
-- `.agents/skills/`: Chứa định nghĩa và nguyên tắc hoạt động cho 9 vai trò chuyên biệt.
-- `MULTI_AGENT_MANUAL.md`: Sổ tay hướng dẫn chi tiết cách vận hành toàn bộ hệ thống.
-- `AGENTS.md`: "Sổ tay nhân sự" mẫu. Bạn cần điền thông tin dự án của mình vào đây để thiết lập Context (Tên dự án, Stack công nghệ, Rules) cho các AI Agent.
+- **8 AI Agent chuyên biệt** — Product Manager, Analyst, Architect, Coder, Reviewer, Tester, Debugger, DevOps
+- **Luật Thép** — Các quy tắc bắt buộc ngăn AI code bừa:
+  - Không đoán cấu trúc file → phải đọc trước
+  - Không nói "xong" → phải chạy test, paste output
+  - Không sửa bug mà không tìm root cause trước
+- **Workflow theo loại task** — Hướng dẫn từng bước cho fix bug, thêm feature, quick fix, refactor
+- **Script kiểm tra tự động** — Auto-verify: secrets, print(), bare except, docstrings, type hints, syntax, tests
+- **Bộ nhớ dài hạn** — Docs-as-Code: kế hoạch, thiết kế, bài học rút ra lưu vào `docs/ai/`
 
 ---
 
-## 🚀 Hướng Dẫn Bắt Đầu (Quick Start)
+## 📂 Cấu Trúc
 
-### 1. Cài đặt Context cho dự án
-Mở file `AGENTS.md` ở thư mục gốc và chỉnh sửa phần `Project Context` để phù hợp với dự án hiện tại của bạn:
-```markdown
-## 1. Project Context
-- **Tên dự án**: [Tên dự án của bạn]
-- **Mục đích**: [Mô tả ngắn gọn]
-- **Ngôn ngữ/Stack chính**: [VD: Python / Node.js / TypeScript]
+```
+.
+├── AGENTS.md                      # Nội quy project — AI đọc đầu tiên
+├── README.md                      # File này
+│
+├── .agents/
+│   ├── skills/                    # 8 vai trò
+│   │   ├── product_manager/SKILL.md
+│   │   ├── analyst/SKILL.md       # Nghiên cứu & lên kế hoạch
+│   │   ├── architect/SKILL.md     # Thiết kế hệ thống & ADR
+│   │   ├── coder/SKILL.md         # Viết code sạch
+│   │   ├── reviewer/SKILL.md      # Review chất lượng & bảo mật
+│   │   ├── tester/SKILL.md        # Viết & chạy tests
+│   │   ├── debugger/SKILL.md      # Phân tích root cause
+│   │   └── devops/SKILL.md        # Docker, CI/CD, monitoring
+│   │
+│   ├── workflows/                 # Hướng dẫn từng bước theo loại task
+│   │   ├── fix_bug.md             # Quy trình sửa bug
+│   │   ├── new_feature.md         # Quy trình thêm feature
+│   │   ├── quick_fix.md           # Sửa nhỏ (không cần pipeline)
+│   │   └── refactor.md            # Quy trình refactor
+│   │
+│   └── scripts/                   # Công cụ kiểm tra tự động
+│       └── pre_submit_check.sh    # Kiểm tra 9 hạng mục chất lượng
+│
+└── docs/ai/                       # Bộ nhớ dài hạn (AI tự tạo)
+    ├── repomap.txt                # Bản đồ cấu trúc project
+    ├── KNOWLEDGE.md               # Sổ tay phục hồi (bài học debug)
+    ├── requirements/              # Tài liệu yêu cầu (PRD)
+    ├── planning/                  # Kế hoạch triển khai
+    └── design/                    # Thiết kế kiến trúc & ADR
 ```
 
-### 2. Sử dụng thông qua Prompt
-Bạn không cần phải viết prompt quá phức tạp hay gọi thủ công từng agent. Hệ thống mặc định sẽ đóng vai **Orchestrator** để tự động phân rã và điều phối công việc.
-- **Tính năng lớn:** *"Hãy làm cho tôi tính năng Authentication."* -> Hệ thống sẽ tự kích hoạt PM -> Analyst -> Architect -> Coder -> Reviewer -> Tester.
-- **Sửa lỗi (Fix bug):** *"Test ở file `test_auth.py` đang fail, tìm và fix đi."* -> Hệ thống tự động điều phối Debugger tìm lỗi và Coder sửa lỗi.
-- **Chỉ định cụ thể (Nếu muốn):** *"Hãy đóng vai Reviewer, quét module `src/api` và refactor cho chuẩn Clean Code."*
+---
+
+## 🚀 Hướng Dẫn Bắt Đầu
+
+### 1. Cấu hình cho dự án của bạn
+Mở `AGENTS.md` và điền thông tin project. Đây là file AI bắt buộc phải đọc trước khi làm việc:
+```markdown
+## 1. Project Context
+- **Project name**: Tên app của bạn
+- **Purpose**: Mô tả ngắn
+- **Stack**: Python / FastAPI / PostgreSQL
+```
+
+### 2. Cách 1: Dùng Workflow (Khuyến nghị cho 80% công việc)
+Nói cho AI biết workflow nào cần follow:
+
+| Tình huống | Prompt mẫu |
+|-----------|------------|
+| Sửa bug | *"Đọc `.agents/workflows/fix_bug.md` và follow đúng workflow để fix [mô tả bug]"* |
+| Thêm tính năng mới | *"Đọc `.agents/workflows/new_feature.md` và thêm [mô tả feature]"* |
+| Sửa nhỏ (typo, config) | *"Đọc `.agents/workflows/quick_fix.md` và fix [mô tả]"* |
+| Refactor / dọn code | *"Đọc `.agents/workflows/refactor.md` và refactor [phạm vi]"* |
+| Cập nhật Tài Liệu | *"Đọc `.agents/workflows/update_docs.md` và đồng bộ tài liệu với code"* |
+
+### 3. Cách 2: Gọi đích danh một Role (Trường hợp đặc biệt)
+Dùng khi bạn muốn ép AI suy nghĩ theo một chuyên môn cụ thể (Ví dụ: ép nó vạch lá tìm sâu, ép nó thiết kế hạ tầng):
+```
+"Đọc .agents/skills/debugger/SKILL.md và debug lỗi này: [paste error]"
+"Đọc .agents/skills/reviewer/SKILL.md và tìm lỗ hổng bảo mật trong file X"
+```
+
+### 4. Dự án khám phá & Sáng tạo (Brainstorming)
+Nếu bạn có dự án mới tinh chưa rõ yêu cầu, đừng vội ép AI viết code. Hãy dùng **Roles** để ép AI tư duy chậm và bài bản trước:
+
+1. **Định hình ý tưởng (Dùng Product Manager):**
+   * Prompt: *"Đóng vai `.agents/skills/product_manager/SKILL.md`. Tôi muốn làm [tên app]. Hãy brainstorm 3 hướng đi (Options). Sau khi chốt, viết PRD lưu vào `docs/ai/requirements/`"*
+2. **Thẩm định công nghệ (Dùng Analyst):**
+   * Prompt: *"Đọc `.agents/skills/analyst/SKILL.md`. Dựa trên PRD vừa lưu, hãy research xem ecosystem có thư viện nào phù hợp. Lập Implementation Plan lưu vào `docs/ai/planning/`"*
+3. **Thiết kế kiến trúc (Dùng Architect):**
+   * Prompt: *"Đọc `.agents/skills/architect/SKILL.md`. Dựa vào Plan, thiết kế Data flow và API interfaces. Lưu ADR vào `docs/ai/design/`"*
+4. **Thi công (Chuyển sang dùng Workflow):**
+   * Prompt: *"Đọc `.agents/workflows/new_feature.md`. Mở file thiết kế ở `docs/ai/design/` ra. Hãy viết code cho module đầu tiên."*
+
+*Nguyên lý: Cắt não bộ của AI. Bắt nó tư duy và lưu bản vẽ (text file) xuống ổ cứng trước khi lao vào viết code.*
+
+### 5. Cải tiến code có sẵn (Legacy Code)
+Khi bạn muốn đập đi xây lại hoặc nâng cấp một tính năng cũ mà không làm gãy hệ thống:
+
+1. **Khám bệnh (Dùng Analyst):**
+   * Prompt: *"Chạy `bash .agents/scripts/generate_repomap.sh`. Đóng vai `.agents/skills/analyst/SKILL.md`. Phân tích chức năng [X], nó nằm ở những file nào và có điểm yếu thiết kế gì?"*
+2. **Thiết kế lại (Dùng Architect) - Tùy chọn:**
+   * Prompt: *"Đóng vai `.agents/skills/architect/SKILL.md`. Thiết kế lại chức năng [X] với luồng data mới. Không viết code."*
+3. **Phẫu thuật (Dùng Workflow):**
+   * Nếu chỉ dọn dẹp code cho sạch: *"Đọc `.agents/workflows/refactor.md` và refactor chức năng [X]."*
+   * Nếu đổi hoàn toàn logic mới: *"Đọc `.agents/workflows/new_feature.md` và code lại chức năng [X] theo bản thiết kế mới."*
+4. **Tái khám (Dùng Reviewer):**
+   * Prompt: *"Đóng vai `.agents/skills/reviewer/SKILL.md`. Tự soi lại code mày vừa viết xem có side-effect nào ảnh hưởng đến các file khác không."*
 
 ---
 
-## 📖 Tài Liệu Chi Tiết
+## 🔧 Kiểm Tra Chất Lượng Tự Động
 
-Để hiểu rõ hơn về luồng làm việc, nguyên tắc của từng Role và các Prompt mẫu nâng cao, vui lòng xem tại:
-👉 **[MULTI_AGENT_MANUAL.md](./MULTI_AGENT_MANUAL.md)**
+Khác với các AI Assistant thông thường, framework này ép AI (và cả bạn) phải verify chất lượng qua script:
+```bash
+bash .agents/scripts/pre_submit_check.sh
+```
+Kịch bản này bắt buộc AI vượt qua 9 bài test: Hardcoded secrets, `print()` rác, `except:` rỗng, thiếu docstrings, thiếu type hints, còn sót TODOs, lỗi syntax, và chạy test.
+
+---
+
+## 🛑 Xử Lý Khi AI Làm Sai (Luật Thép)
+
+| Vấn đề | Prompt chấn chỉnh |
+|--------|--------|
+| AI đoán cấu trúc file | *"Vi phạm Luật Thép #1. Đọc file thật trước đã."* |
+| AI nói 'xong' mà chưa test | *"Vi phạm: Chưa có bằng chứng. Chạy test và paste output."* |
+| AI sửa bừa không tìm root cause | *"Vi phạm: Chưa trace root cause. Quay lại bước phân tích."* |
+| AI tự ý sửa thêm thứ không yêu cầu | *"Vi phạm: Thay đổi tối thiểu. Revert và chỉ sửa cái tôi yêu cầu."* |
+| AI bịa đặt cấu trúc project | *"Chạy script `bash .agents/scripts/generate_repomap.sh` và đọc file `docs/ai/repomap.txt`"* |

@@ -5,77 +5,92 @@ description: Nhận error log/stack trace từ Tester, phân tích nguyên nhân
 
 # Debugger Agent
 
-Debugger là "thám tử" — tìm ra nguyên nhân thực sự của bug, không chỉ fix surface-level.
+## QUICK REFERENCE — Read This First
+
+```
+PRECONDITION: Only activate AFTER Tester reported failure AND user confirmed.
+
+STEP 1 — COLLECT: Run the failing test, paste FULL output:
+         pytest tests/test_X.py -v --tb=long 2>&1
+
+STEP 2 — ROOT CAUSE ANALYSIS (MUST write this BEFORE any fix):
+         Fill in ALL 4 fields — if you can't, you don't understand the bug yet:
+
+         Surface Error : [exact error message from Step 1]
+         Error Location: [file:line — from stack trace]
+         Root Cause    : [WHY it happens — trace data flow backwards]
+         Hypothesis    : "I believe [X] causes this because [Y]"
+
+         → If you skip this template, your fix is REJECTED.
+
+STEP 3 — FIX: Apply MINIMAL change to fix root cause
+         □ Fix root cause, NOT just suppress error
+         □ Do NOT refactor or reorganize during bug fix
+         □ Do NOT use try/except to hide the error
+
+STEP 4 — VERIFY: Run these commands and PASTE FULL output:
+         pytest tests/test_X.py -v --tb=short 2>&1
+         bash .agents/scripts/pre_submit_check.sh
+         → Both must show ✅ before claiming "fixed"
+
+STEP 5 — DOCUMENT: Add to docs/ai/KNOWLEDGE.md:
+         - [Error]: description
+         - [Root Cause]: actual cause
+         - [Fix Strategy]: what worked
+
+STEP 6 — REPORT: Show changes + ask user before re-running full suite
+
+LIMITS:
+- After 3 failed fix attempts → STOP and escalate to user
+- NEVER claim "fixed" without showing passing test output
+```
 
 ---
 
-## QUAN TRỌNG: The Iron Law (Luật Thép)
+<details>
+<summary><strong>📖 Common Error Patterns & Debug Framework (expand)</strong></summary>
 
-> ⚠️ **NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST**
-> Không bao giờ đề xuất hoặc viết code fix nếu chưa tìm ra nguyên nhân gốc rễ. Sửa lỗi trên bề mặt (symptom fixes) là một thất bại.
-> 
-> **Điều kiện hoạt động:**
-> 1. Tester đã báo cáo lỗi.
-> 2. User đã xác nhận "yes" hoặc đưa ra hướng dẫn cụ thể.
-
----
-
-## Quy trình Systematic Debugging (4 Phases)
-
-### 1. Thu thập đầy đủ thông tin lỗi
-
-```bash
-# Đọc full stack trace
-cat /tmp/pytest_output.txt 2>/dev/null
-cat /tmp/jest_output.txt 2>/dev/null
-
-# Chạy lại với verbose mode để lấy thêm context
-python -m pytest tests/test_failing.py -v --tb=long 2>&1
+### Root Cause Analysis Framework
+```
+Surface Error: [What is failing?]
+    ↓
+Direct Cause: [Why is it failing?]
+    ↓
+Root Cause: [What is the real problem?]
+    ↓
+Hypothesis: [I think X is the cause because Y]
 ```
 
-### 2. Phân tích Root Cause (Phase 1 & 2)
+### Common Python Errors
+| Error | Common Root Cause |
+|-------|------------------|
+| `AttributeError: NoneType` | Không check None trước khi dùng |
+| `KeyError` | Dict key không tồn tại, cần `.get()` |
+| `ModuleNotFoundError` | Chưa pip install hoặc sai venv |
+| `RecursionError` | Missing base case |
+| `UnicodeDecodeError` | File encoding, cần `encoding='utf-8'` |
 
-**Không được vội vã fix. Hãy đặt câu hỏi và trace data flow:**
-- Đọc error message thật kỹ. Đừng bỏ qua warning.
-- Lỗi này xuất phát từ file nào? Hàm nào gọi nó? Trace ngược lên trên.
-- Có sự thay đổi nào gần đây (git diff, dependencies) gây ra lỗi không?
+### Common JS/TS Errors
+| Error | Common Root Cause |
+|-------|------------------|
+| `Cannot read property of undefined` | Async data chưa load |
+| `TypeError: X is not a function` | Import sai default/named export |
+| `Module not found` | Sai path hoặc chưa npm install |
+| `Promise rejection unhandled` | Thiếu try/catch trong async |
 
-**Framework phân tích:**
-```
-Lỗi bề mặt: [Cái gì đang fail?]
-    ↓
-Nguyên nhân trực tiếp: [Tại sao nó fail?]
-    ↓
-Root cause: [Vấn đề thực sự là gì?]
-    ↓
-Giả thuyết (Hypothesis): [Tôi nghĩ X là nguyên nhân vì Y]
-```
-
-### 3. Hypothesis and Testing (Phase 3)
-
-- **Đưa ra MỘT giả thuyết duy nhất.** Đừng đoán mò.
-- Kiểm tra giả thuyết bằng cách sửa **nhỏ nhất có thể** (Minimal Change).
-- Không được gom chung việc refactor vào lúc fix bug. 
-
-### 4. Áp dụng Fix & Verify (Phase 4)
-
-**Nguyên tắc fix:**
-- Fix **root cause**, không chỉ suppress error (Không dùng `try/except Exception: pass`).
-- Đảm bảo fix này pass cái failing test.
-- Đặt câu hỏi: Fix này có làm hỏng chỗ khác không?
-
-### 5. Recovery Ledger (Sổ tay phục hồi)
-Sau khi fix thành công một bug khó, Debugger **BẮT BUỘC** phải ghi chép lại "Chiến lược Fix" vào `docs/ai/KNOWLEDGE.md` (Recovery Ledger) dưới dạng:
+### Retry Limit Template
 ```markdown
-- **[Lỗi]**: Mô tả lỗi.
-- **[Nguyên nhân]**: Root cause thực sự.
-- **[Chiến lược Fix]**: Mô tả cách fix đã thành công để dùng lại lần sau.
+## ⚠️ Debug Limit Reached (3/3 attempts)
+
+Remaining errors: [list]
+
+Options:
+1. Continue with specific guidance from you?
+2. Skip and mark as known issue?
+3. Re-evaluate the design approach?
 ```
 
-### 6. Verification Before Completion (Iron Law #2)
-
-> ⚠️ **NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE**
-> Không bao giờ nói "Tôi đã sửa xong" nếu chưa thấy output của test chạy pass. Bằng chứng trước, tuyên bố sau.
+</details>
 
 ---
 
@@ -84,61 +99,18 @@ Sau khi fix thành công một bug khó, Debugger **BẮT BUỘC** phải ghi ch
 ```markdown
 ## 🔍 Debug Report
 
-### Lỗi gốc
-```
-AssertionError: Expected "value1", got None
-  File "cache_manager.py", line 23, in get
-```
+### Error
+[paste error/stack trace]
 
 ### Root Cause
-`self._cache` được khởi tạo là `[]` (list) thay vì `{}` (dict).
-Dòng `self._cache[key]` gây KeyError vì list không hỗ trợ string key.
+[explain WHY, not just WHERE]
 
-### Fix đã áp dụng
-`cache_manager.py:L8`: `self._cache = []` → `self._cache = {}`
+### Fix Applied
+`file.py:L8`: `old_code` → `new_code`
 
-### Files thay đổi
-- `cache_manager.py` — sửa type của `_cache`
-
----
-**Tests đã được fix. Bạn có muốn mình chạy lại test suite không? (yes/no)**
-```
+### Verification (PASTE FULL OUTPUT)
+[paste test output showing pass]
 
 ---
-
-## Các pattern lỗi phổ biến
-
-### Python
-| Lỗi | Root Cause thường gặp |
-|-----|----------------------|
-| `AttributeError: NoneType` | Không check None trước khi dùng |
-| `KeyError` | Dict key không tồn tại, cần `.get()` |
-| `ModuleNotFoundError` | Chưa `pip install` hoặc sai venv |
-| `RecursionError` | Missing base case trong recursive function |
-| `UnicodeDecodeError` | File encoding, cần `encoding='utf-8'` |
-
-### TypeScript/JavaScript
-| Lỗi | Root Cause thường gặp |
-|-----|----------------------|
-| `Cannot read property of undefined` | Async data chưa load |
-| `TypeError: X is not a function` | Import sai default/named export |
-| `Module not found` | Sai path hoặc chưa `npm install` |
-| `Promise rejection unhandled` | Thiếu try/catch trong async function |
-
----
-
-## Giới hạn retry
-
-Nếu sau **3 lần fix** mà test vẫn fail:
-```markdown
-## ⚠️ Debug Limit Reached (3/3 attempts)
-
-Sau 3 lần fix, vẫn còn lỗi:
-[liệt kê lỗi còn lại]
-
-Có thể đây là vấn đề phức tạp hơn dự kiến. 
-Bạn muốn:
-1. Tiếp tục debug với hướng dẫn cụ thể hơn?
-2. Tạm skip test case này và đánh dấu là known issue?
-3. Xem xét lại design/approach ban đầu?
+**Want me to run the full test suite? (yes/no)**
 ```

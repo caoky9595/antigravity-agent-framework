@@ -1,32 +1,74 @@
 # AI Agent Handbook (AGENTS.md)
-> Đây là "Sổ tay nhân sự" dành cho mọi AI Agent hoạt động trong project này.
-> **BẮT BUỘC**: Mọi role (Analyst, Architect, Coder, Reviewer, Tester, Debugger, DevOps) phải đọc và tuân thủ các rule trong file này trước khi thực thi lệnh.
+
+> **Every agent MUST read and follow this file before executing any task.**
 
 ## 1. Project Context
-- **Tên dự án**: [Tên dự án của bạn]
-- **Mục đích**: [Mô tả ngắn gọn mục đích của dự án]
-- **Ngôn ngữ/Stack chính**: [VD: Python / JS / TS / Go / Rust] (Sửa đổi cho phù hợp).
+- **Project name**: [Your project name]
+- **Purpose**: [Brief description]
+- **Stack**: [Python / JS / TS / Go / Rust] (modify as needed)
 
-## 2. Agentic Workflow Rules (SOTA 2026)
-1. **Persistent Memory**:
-   - Tất cả phân tích, yêu cầu và kiến trúc phải được lưu dưới dạng Docs-as-Code tại thư mục `docs/ai/`.
-   - Các bài học và bug fixes (Recovery Ledger) phải được lưu tại `docs/ai/KNOWLEDGE.md`.
-2. **Iron Laws (Luật Thép)**:
-   - *Debugger*: KHÔNG tự ý đề xuất fix nếu chưa trace ra root cause.
-   - *Coder/Tester*: KHÔNG viết production code nếu chưa có failing test case (Red-Green-Refactor).
-   - *Tất cả roles*: KHÔNG bao giờ nói "Hoàn thành" nếu chưa có bằng chứng xác thực (Linter, Test output).
-3. **Repo Map**:
-   - Luôn cập nhật và dựa vào `docs/ai/repomap.txt` để nắm kiến trúc codebase thay vì tìm kiếm (grep) mù quáng.
+## 2. MANDATORY CHECKLIST — Run Before Every Response
 
-## 3. Tech Stack & Coding Style
-- **Python**: Dùng `pytest` cho testing. Dùng type hints bắt buộc. Dùng docstrings chuẩn cho mọi public methods.
-- **Error Handling**: Áp dụng "Fortress Error Handling" (không dùng empty except, bắt lỗi specific, log chi tiết).
-- **Logging**: Dùng Structured JSON Logging, không dùng `print()`.
+> [!CAUTION]
+> These are **enforceable rules**, not suggestions. Violating any rule = failed task.
 
-## 4. Security, DevOps & Observability
-- Tuyệt đối KHÔNG lưu API keys vào code. Luôn dùng Environment Variables (`.env`).
-- Mọi feature mới phải tuân thủ Least Privilege và có sẵn health-check endpoints.
-- **Observability (Agentic Tracing)**: Các quyết định phức tạp và Tool Calls của Agent phải được log chi tiết để tiện cho việc audit và debug quá trình phân rã task.
+```
+BEFORE writing any code, verify:
+□ Have I read the relevant files first? (Not guessing structure)
+□ Am I using the project's existing patterns? (Check existing code)
 
-## 5. Model Context Protocol (MCP)
-- Các Agent (đặc biệt là Coder và DevOps) **BẮT BUỘC** ưu tiên sử dụng MCP Servers để tương tác với external tools (như Database, GitHub, Slack) thay vì tự code lại các đoạn mã tích hợp API từ đầu. Đây là chuẩn công nghiệp mới giúp hệ thống linh hoạt và dễ maintain.
+BEFORE saying "Done" or "Fixed", verify:
+□ Have I run the actual command (test/lint/build) and pasted FULL output?
+□ Does the output show 0 failures / 0 errors?
+□ If I haven't run verification → I MUST NOT claim completion
+
+BEFORE fixing a bug, verify:
+□ Have I traced the root cause? (Not just suppressing the error)
+□ Can I explain WHY the bug happens, not just WHERE?
+
+ALWAYS:
+□ Use logger (not print()) for Python
+□ Use specific exceptions (not bare except/catch)
+□ Read from os.getenv() for secrets (never hardcode)
+□ Add type hints (Python) / JSDoc (JS/TS) to public functions
+```
+
+## 3. Iron Laws (NON-NEGOTIABLE)
+
+1. **NO GUESSING** — If you don't know the file structure, READ it first. Never fabricate file paths, function names, or outputs.
+2. **NO COMPLETION WITHOUT EVIDENCE** — You must run the verification command and paste its output. "It should work" is not evidence.
+3. **NO FIXES WITHOUT ROOT CAUSE** — Trace the data flow. Explain the chain: Error → Direct cause → Root cause → Hypothesis.
+4. **MINIMAL CHANGES** — Fix what's asked. Don't refactor, rename, or reorganize things that aren't part of the task.
+
+## 4. Verification Commands (USE THESE — not just words)
+
+Every rule above has a concrete verification. Run these, paste output:
+
+| What to verify | Command |
+|---------------|---------|
+| Secrets, print(), bare except, syntax, docstrings, type hints, TODOs, tests | `bash .agents/scripts/pre_submit_check.sh` |
+| Python syntax only | `python3 -m py_compile <file>.py && echo "✅ OK"` |
+| Python lint + format | `bash .agents/skills/coder/scripts/lint_python.sh` |
+| JS/TS lint + format | `bash .agents/skills/coder/scripts/lint_js.sh` |
+| Run all tests | `bash .agents/skills/tester/scripts/run_tests.sh` |
+| Check for hardcoded secrets | `grep -rn "api_key\|password\|token\|secret" . --include="*.py" \| grep -v venv` |
+| Check for print() | `grep -rn "^\s*print(" . --include="*.py" \| grep -v test_ \| grep -v venv` |
+| Check for bare except | `grep -rn "except:" . --include="*.py" \| grep -v venv` |
+| Check for TODOs left behind | `grep -rn "TODO\|FIXME\|HACK" . --include="*.py" \| grep -v venv` |
+
+> [!IMPORTANT]
+> If you cannot run a verification command, STATE that explicitly:
+> "I cannot verify because [reason]. Please run: `[command]`"
+> NEVER silently skip verification.
+
+## 5. Persistent Memory (Docs-as-Code)
+- Save analysis/plans to `docs/ai/` for cross-session persistence
+- Log lessons learned to `docs/ai/KNOWLEDGE.md` (Recovery Ledger)
+- Use `docs/ai/repomap.txt` to understand project structure before grepping blindly
+
+## 6. Tech Standards
+- **Python**: pytest, type hints required, docstrings on public methods
+- **Error Handling**: Specific exceptions, with context logged
+- **Logging**: Structured (JSON preferred), never `print()`
+- **Secrets**: Always `os.getenv()`, never in source code
+- **MCP**: Prefer MCP Servers for external tool integration (DB, GitHub, Slack)
