@@ -67,7 +67,9 @@ Bởi vì `antigravity` là một framework vạn năng (Core OS), nó không ch
 - Tạo một thư mục mới: `.agents/skills/agent-backend/SKILL.md`.
 - Định nghĩa rõ persona, stack công nghệ, và coding standards của bạn trong file đó.
 - 🔗 **Nguồn tham khảo các Skill chất lượng cao:** Bạn có thể copy các role/prompt cực đỉnh từ cộng đồng tại:
-  - [Cursor.directory](https://cursor.directory/) - Thư viện rules khổng lồ cho mọi stack.
+  - [obra/superpowers](https://github.com/obra/superpowers) - Bộ skill tư duy hệ thống cực đỉnh (Systematic Debugging, TDD, Planning).
+  - [wshobson/agents](https://github.com/wshobson/agents) - Tổng hợp Domain Skills cực kỳ chi tiết (Architecture, Backend, API Design...).
+  - [Cursor.directory](https://cursor.directory/) - Thư viện rules khổng lồ cho mọi stack ngôn ngữ.
   - [Awesome CursorRules](https://github.com/PatrickJS/awesome-cursorrules) - Tổng hợp các prompt/role chất lượng cao trên Github.
 
 ### 3. Sử dụng Slash Commands (Khuyến nghị cho 100% công việc)
