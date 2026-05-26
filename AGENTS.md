@@ -5,7 +5,7 @@
 ## 1. Project Context
 - **Project name**: [Your project name]
 - **Purpose**: [Brief description]
-- **Stack**: [Python / JS / TS / Go / Rust] (modify as needed)
+- **Stack**: [Target Languages / Frameworks]
 
 ## 2. MANDATORY CHECKLIST — Run Before Every Response
 
@@ -27,10 +27,10 @@ BEFORE fixing a bug, verify:
 □ Can I explain WHY the bug happens, not just WHERE?
 
 ALWAYS:
-□ Use logger (not print()) for Python
-□ Use specific exceptions (not bare except/catch)
-□ Read from os.getenv() for secrets (never hardcode)
-□ Add type hints (Python) / JSDoc (JS/TS) to public functions
+□ Use proper project logging (never use debug prints in production code)
+□ Use specific exceptions/error handling (not bare catch-all)
+□ Read from environment variables for secrets (never hardcode)
+□ Add types/docstrings to public functions
 ```
 
 ## 3. Iron Laws (NON-NEGOTIABLE)
@@ -46,15 +46,9 @@ Every rule above has a concrete verification. Run these, paste output:
 
 | What to verify | Command |
 |---------------|---------|
-| Secrets, print(), bare except, syntax, docstrings, type hints, TODOs, tests | `bash .agents/scripts/pre_submit_check.sh` |
-| Python syntax only | `python3 -m py_compile <file>.py && echo "✅ OK"` |
-| Python lint + format | `bash .agents/skills/coder/scripts/lint_python.sh` |
-| JS/TS lint + format | `bash .agents/skills/coder/scripts/lint_js.sh` |
-| Run all tests | `bash .agents/skills/tester/scripts/run_tests.sh` |
-| Check for hardcoded secrets | `grep -rn "api_key\|password\|token\|secret" . --include="*.py" \| grep -v venv` |
-| Check for print() | `grep -rn "^\s*print(" . --include="*.py" \| grep -v test_ \| grep -v venv` |
-| Check for bare except | `grep -rn "except:" . --include="*.py" \| grep -v venv` |
-| Check for TODOs left behind | `grep -rn "TODO\|FIXME\|HACK" . --include="*.py" \| grep -v venv` |
+| Secrets, debug prints, bare errors, lint, tests | `bash .agents/scripts/pre_submit_check.sh` |
+| Repository Map | `bash .agents/scripts/generate_repomap.sh` |
+| Custom Project Tests | `[Your test command here]` |
 
 > [!IMPORTANT]
 > If you cannot run a verification command, STATE that explicitly:
@@ -62,13 +56,12 @@ Every rule above has a concrete verification. Run these, paste output:
 > NEVER silently skip verification.
 
 ## 5. Persistent Memory (Docs-as-Code)
-- Save analysis/plans to `docs/ai/` for cross-session persistence
+- Save analysis/plans to `docs/ai/planning/` or `docs/ai/design/` for cross-session persistence
 - Log lessons learned to `docs/ai/KNOWLEDGE.md` (Recovery Ledger)
-- Use `docs/ai/repomap.txt` to understand project structure before grepping blindly
+- Use `docs/ai/repomap.txt` to understand project structure before guessing files
 
 ## 6. Tech Standards
-- **Python**: pytest, type hints required, docstrings on public methods
-- **Error Handling**: Specific exceptions, with context logged
-- **Logging**: Structured (JSON preferred), never `print()`
-- **Secrets**: Always `os.getenv()`, never in source code
+- **Error Handling**: Use language-specific best practices, propagate errors correctly
+- **Logging**: Structured logging preferred
+- **Secrets**: Always use environment variables
 - **MCP**: Prefer MCP Servers for external tool integration (DB, GitHub, Slack)
