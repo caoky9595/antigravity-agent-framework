@@ -6,23 +6,31 @@
 ```bash
 # Read project structure — don't guess
 cat docs/ai/repomap.txt
+# Read previous lessons
+cat docs/ai/KNOWLEDGE.md
+# Read architecture rules
+cat docs/ai/ARCHITECTURE.md
 # Read relevant source files
-cat <relevant_file>.py
+cat <relevant_file>
 ```
 List the files you read: [file1, file2, ...]
 
 ## Step 2: PLAN
 Write a brief plan:
 - Files to create/modify
-- Function signatures (with type hints)
+- Function/API signatures
+- Database/State changes
 - Data flow (input → process → output)
 
+Save plan to: `docs/ai/planning/[feature-name].md`
+
 ## Step 3: IMPLEMENT
-Write code following existing project patterns:
-□ Docstrings on all public functions
-□ Use logger (not print)
-□ Use specific exceptions (not bare except)
-□ No hardcoded secrets
+Write code following the project's existing patterns:
+□ Follow architectural layering (e.g., Controller → Service)
+□ Add types/interfaces/docstrings where appropriate
+□ Use project's preferred logging (not print/console.log)
+□ Handle specific exceptions properly
+□ Never hardcode secrets
 
 ## Step 4: VERIFY
 Run ALL commands and paste FULL output:
@@ -30,7 +38,10 @@ Run ALL commands and paste FULL output:
 # 1. Lint and format (using your project's linter)
 [PROJECT_LINT_COMMAND]
 
-# 2. Full quality check (secrets, print, except, docstrings, type hints, TODOs, syntax, tests)
+# 2. Build / Type Check
+[PROJECT_BUILD_COMMAND]
+
+# 3. Full quality check
 bash .agents/scripts/pre_submit_check.sh
 ```
 → Fix any ❌ errors before reporting done.
@@ -40,7 +51,7 @@ bash .agents/scripts/pre_submit_check.sh
 ## ✅ Feature Complete: [Name]
 
 ### Files changed
-- `file.py` — [what changed]
+- `file.ext` — [what changed]
 
 ### Verification Output
 [paste FULL pre_submit_check.sh output]
