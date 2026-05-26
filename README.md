@@ -62,7 +62,15 @@ Biến trợ lý AI của bạn thành một kỹ sư phần mềm kỷ luật. 
 2. Mở `AGENTS.md` và điền thông tin project của bạn.
 3. Mở `.agents/scripts/pre_submit_check.sh` và bỏ comment/cấu hình lệnh Test/Lint cho đúng ngôn ngữ dự án của bạn.
 
-### 2. Sử dụng Slash Commands (Khuyến nghị cho 100% công việc)
+### 2. Mở rộng: Tạo các Role/Skill chuyên biệt (Domain Skills)
+Bởi vì `antigravity` là một framework vạn năng (Core OS), nó không chứa sẵn các vai trò cụ thể như Frontend Engineer, Backend Expert, hay Database Architect. Bạn cần **tự bổ sung** các Role này cho dự án của bạn vào thư mục `.agents/skills/`.
+- Tạo một thư mục mới: `.agents/skills/agent-backend/SKILL.md`.
+- Định nghĩa rõ persona, stack công nghệ, và coding standards của bạn trong file đó.
+- 🔗 **Nguồn tham khảo các Skill chất lượng cao:** Bạn có thể copy các role/prompt cực đỉnh từ cộng đồng tại:
+  - [Cursor.directory](https://cursor.directory/) - Thư viện rules khổng lồ cho mọi stack.
+  - [Awesome CursorRules](https://github.com/PatrickJS/awesome-cursorrules) - Tổng hợp các prompt/role chất lượng cao trên Github.
+
+### 3. Sử dụng Slash Commands (Khuyến nghị cho 100% công việc)
 Nhờ cơ chế Lazy Loading, bạn có thể gọi thẳng quy trình bằng phím tắt:
 
 | Tình huống | Cú pháp (Dùng trong Cursor / Gemini) |
@@ -75,7 +83,7 @@ Nhờ cơ chế Lazy Loading, bạn có thể gọi thẳng quy trình bằng ph
 
 *Nguyên lý: AI sẽ tự động đọc workflow tương ứng, làm theo từng bước, tự động gọi script test và cập nhật KNOWLEDGE.md trước khi báo cáo hoàn thành.*
 
-### 3. Quy trình làm tính năng phức tạp (Docs-as-code)
+### 4. Quy trình làm tính năng phức tạp (Docs-as-code)
 Nếu bạn có một Epic (tính năng lớn), đừng bắt AI code ngay. Hãy bắt nó vạch kế hoạch trước:
 1. **Lên kế hoạch:** *"Hãy nghiên cứu yêu cầu này và viết bản kế hoạch implementation lưu vào `docs/ai/planning/`."*
 2. **Thiết kế kiến trúc:** *"Dựa vào bản kế hoạch, hãy thiết kế data flow và lưu vào `docs/ai/design/`."*
