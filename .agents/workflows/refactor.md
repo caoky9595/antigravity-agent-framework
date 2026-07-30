@@ -3,10 +3,21 @@
 > Use this for code cleanup, reducing duplication, improving structure.
 > Refactoring changes INTERNAL structure without changing EXTERNAL behavior.
 
+## Step 0: ROLE CHECK
+What domain is this task in (backend/frontend/database/mobile/...)? Check
+`.agents/skills/agent-*/` (project-specific roles, NOT the 6 core workflow
+skills) for one whose `description` already matches it.
+- Match found → read that SKILL.md and apply its persona/coding standards for
+  every step below.
+- No match → run this to get the role-creation routine, follow it first, then continue:
+```
+test -f .agents/workflows/new_role.md && cat .agents/workflows/new_role.md || cat ~/.antigravity-agent-framework/.agents/workflows/new_role.md
+```
+
 ## Step 1: BASELINE
 Run tests and paste output — ALL must pass before refactoring:
 ```bash
-bash .agents/skills/tester/scripts/run_tests.sh
+[PROJECT_TEST_COMMAND]
 ```
 → If tests fail → fix them first. Do NOT refactor broken code.
 
@@ -28,7 +39,7 @@ Pick ONE issue from the scan results. Make the smallest change:
 ## Step 4: VERIFY
 Run tests again — paste output:
 ```bash
-bash .agents/skills/tester/scripts/run_tests.sh
+[PROJECT_TEST_COMMAND]
 ```
 → All tests must still pass. If any fail, your refactor changed behavior. Revert.
 

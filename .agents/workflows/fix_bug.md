@@ -2,6 +2,17 @@
 
 > Use this workflow for any bug fix. Follow steps IN ORDER, do NOT skip.
 
+## Step 0: ROLE CHECK
+What domain is this bug in (backend/frontend/database/mobile/...)? Check
+`.agents/skills/agent-*/` (project-specific roles, NOT the 6 core workflow
+skills) for one whose `description` already matches it.
+- Match found → read that SKILL.md and apply its persona/coding standards for
+  every step below.
+- No match → run this to get the role-creation routine, follow it first, then continue:
+```
+test -f .agents/workflows/new_role.md && cat .agents/workflows/new_role.md || cat ~/.antigravity-agent-framework/.agents/workflows/new_role.md
+```
+
 ## Step 1: REPRODUCE
 ```bash
 # Read previous lessons — you might have seen this before

@@ -2,14 +2,25 @@
 
 > Use this for adding a new feature. Follow steps IN ORDER.
 
+## Step 0: ROLE CHECK
+What domain is this feature in (backend/frontend/database/mobile/...)? Check
+`.agents/skills/agent-*/` (project-specific roles, NOT the 6 core workflow
+skills) for one whose `description` already matches it.
+- Match found → read that SKILL.md and apply its persona/coding standards for
+  every step below.
+- No match → run this to get the role-creation routine, follow it first, then continue:
+```
+test -f .agents/workflows/new_role.md && cat .agents/workflows/new_role.md || cat ~/.antigravity-agent-framework/.agents/workflows/new_role.md
+```
+
 ## Step 1: UNDERSTAND
 ```bash
 # Read project structure — don't guess
 cat docs/ai/repomap.txt
 # Read previous lessons
 cat docs/ai/KNOWLEDGE.md
-# Read architecture rules
-cat docs/ai/ARCHITECTURE.md
+# Read any existing architecture/design docs, if present
+cat docs/ai/design/*.md 2>/dev/null
 # Read relevant source files
 cat <relevant_file>
 ```

@@ -48,7 +48,7 @@ Every rule above has a concrete verification. Run these, paste output:
 |---------------|---------|
 | Secrets, debug prints, bare errors, lint, tests | `bash .agents/scripts/pre_submit_check.sh` |
 | Repository Map | `bash .agents/scripts/generate_repomap.sh` |
-| Custom Project Tests | `[Your test command here]` |
+| Custom Project Tests | `[PROJECT_TEST_COMMAND]` |
 
 > [!IMPORTANT]
 > If you cannot run a verification command, STATE that explicitly:
