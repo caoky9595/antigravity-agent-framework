@@ -19,6 +19,8 @@ set -euo pipefail
 
 FRAMEWORK_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 SKILLS="fix_bug new_feature quick_fix refactor update_docs new_role"
+DO_CLAUDE=1
+DO_GEMINI=1
 
 # Colors — only emitted when stdout is an actual terminal, so piped/redirected
 # output (logs, CI) stays plain text with no stray escape codes.
@@ -37,10 +39,52 @@ err()     { echo "${C_RED}✗ $1${C_RESET}" >&2; }
 
 usage() {
     echo "Usage:"
-    echo "  $0                      (opens a folder-picker dialog)"
-    echo "  $0 <target-project-path>"
-    echo "  ./machine-setup.sh      (one-time per machine — see this file's header)"
+    echo "  ./init.sh                             (opens a folder-picker dialog)"
+    echo "  ./init.sh <target-project-path>"
+    echo "  ./machine-setup.sh                    (opens a tool-picker dialog)"
+    echo "  ./machine-setup.sh --claude-only       (skip the dialog: Claude Code + Cursor only)"
+    echo "  ./machine-setup.sh --antigravity-only  (skip the dialog: Antigravity only)"
+    echo "  ./machine-setup.sh --all               (skip the dialog: both)"
     exit 1
+}
+
+# Native checklist dialog for which tool(s) to wire up. Sets DO_CLAUDE / DO_GEMINI.
+# Cursor has no config of its own — it piggybacks on ~/.claude — so it's presented
+# as one option together with Claude Code, not a separate one.
+pick_targets() {
+    local claude_label="Claude Code + Cursor (~/.claude)"
+    local gemini_label="Google Antigravity (~/.gemini) — best-effort"
+    local sel
+
+    if command -v osascript >/dev/null 2>&1; then
+        sel="$(osascript -e "
+set sel to choose from list {\"$claude_label\", \"$gemini_label\"} with title \"antigravity-agent-framework\" with prompt \"Cài cho tool nào?\" default items {\"$claude_label\", \"$gemini_label\"} with multiple selections allowed
+if sel is false then
+    return \"CANCELED\"
+else
+    return sel as string
+end if" 2>/dev/null)" || { err "canceled — nothing was changed."; exit 1; }
+    elif command -v zenity >/dev/null 2>&1; then
+        sel="$(zenity --list --checklist --separator="|" --column="" --column="Tool" \
+            TRUE "$claude_label" TRUE "$gemini_label" \
+            --title="antigravity-agent-framework" --text="Cài cho tool nào?" 2>/dev/null)" \
+            || { err "canceled — nothing was changed."; exit 1; }
+    elif command -v kdialog >/dev/null 2>&1; then
+        sel="$(kdialog --checklist "Cài cho tool nào?" claude "$claude_label" on gemini "$gemini_label" on 2>/dev/null)" \
+            || { err "canceled — nothing was changed."; exit 1; }
+    else
+        warn "no picker tool found (osascript/zenity/kdialog) — falling back to text prompts."
+        local a1 a2
+        read -r -p "Cài cho Claude Code + Cursor (~/.claude)? [Y/n] " a1 || true
+        read -r -p "Cài cho Google Antigravity (~/.gemini)? [Y/n] " a2 || true
+        [[ "$a1" =~ ^[Nn] ]] && DO_CLAUDE=0
+        [[ "$a2" =~ ^[Nn] ]] && DO_GEMINI=0
+        return
+    fi
+
+    [ "$sel" = "CANCELED" ] && { err "canceled — nothing was changed."; exit 1; }
+    echo "$sel" | grep -q "Claude" && DO_CLAUDE=1 || DO_CLAUDE=0
+    echo "$sel" | grep -q "Antigravity" && DO_GEMINI=1 || DO_GEMINI=0
 }
 
 # Open a native "choose folder" dialog. Prints the chosen absolute path on
@@ -91,28 +135,47 @@ gen_copy() {
 }
 
 machine_setup() {
+    local mode="${1:-}"
+    case "$mode" in
+        --claude-only)      DO_CLAUDE=1; DO_GEMINI=0 ;;
+        --antigravity-only) DO_CLAUDE=0; DO_GEMINI=1 ;;
+        --all)               DO_CLAUDE=1; DO_GEMINI=1 ;;
+        "")                  pick_targets ;;
+        *)                    err "unknown mode: $mode"; usage ;;
+    esac
+
     echo "${C_BOLD}=== Machine-wide setup ===${C_RESET}"
 
-    section "Claude Code (~/.claude)"
-    safe_link "$FRAMEWORK_HOME/claude-global-config/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-    safe_link "$FRAMEWORK_HOME/claude-global-config/agents/quick-worker.md" "$HOME/.claude/agents/quick-worker.md"
-    safe_link "$FRAMEWORK_HOME/claude-global-config/agents/deep-reasoner.md" "$HOME/.claude/agents/deep-reasoner.md"
-    for s in $SKILLS; do
-        safe_link "$FRAMEWORK_HOME/.agents/skills/$s/SKILL.md" "$HOME/.claude/skills/$s/SKILL.md"
-    done
+    if [ "$DO_CLAUDE" -eq 1 ]; then
+        section "Claude Code + Cursor (~/.claude)"
+        safe_link "$FRAMEWORK_HOME/claude-global-config/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+        safe_link "$FRAMEWORK_HOME/claude-global-config/agents/quick-worker.md" "$HOME/.claude/agents/quick-worker.md"
+        safe_link "$FRAMEWORK_HOME/claude-global-config/agents/deep-reasoner.md" "$HOME/.claude/agents/deep-reasoner.md"
+        for s in $SKILLS; do
+            safe_link "$FRAMEWORK_HOME/.agents/skills/$s/SKILL.md" "$HOME/.claude/skills/$s/SKILL.md"
+        done
 
-    section "Framework indirection symlink"
-    safe_link "$FRAMEWORK_HOME" "$HOME/.antigravity-agent-framework"
+        section "Framework indirection symlink"
+        safe_link "$FRAMEWORK_HOME" "$HOME/.antigravity-agent-framework"
+    else
+        section "Claude Code + Cursor (~/.claude)"
+        info "skipped (not selected)"
+    fi
 
-    section "Google Antigravity (~/.gemini) — best-effort"
-    info "Antigravity's global config path/format is still in flux across its"
-    info "own docs; only the plain-prose GEMINI.md baseline block is wired here."
-    safe_link "$FRAMEWORK_HOME/claude-global-config/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+    if [ "$DO_GEMINI" -eq 1 ]; then
+        section "Google Antigravity (~/.gemini) — best-effort"
+        info "Antigravity's global config path/format is still in flux across its"
+        info "own docs; only the plain-prose GEMINI.md baseline block is wired here."
+        safe_link "$FRAMEWORK_HOME/claude-global-config/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+    else
+        section "Google Antigravity (~/.gemini)"
+        info "skipped (not selected)"
+    fi
 
     echo
-    echo "${C_BOLD}${C_GREEN}Done.${C_RESET} Every project on this machine now gets baseline discipline +"
-    echo "cost-aware delegation (Claude Code, best-effort Antigravity) and the"
-    echo "6 workflow skills (Claude Code, and Cursor if it reads ~/.claude/skills)."
+    echo "${C_BOLD}${C_GREEN}Done.${C_RESET}"
+    [ "$DO_CLAUDE" -eq 1 ] && echo "Claude Code (+ Cursor if it reads ~/.claude/skills): baseline discipline, cost-aware delegation, 6 workflow skills."
+    [ "$DO_GEMINI" -eq 1 ] && echo "Google Antigravity: baseline discipline (best-effort)."
 }
 
 init_project() {
@@ -146,8 +209,6 @@ init_project() {
     echo "  2. Customize $target/.agents/scripts/pre_submit_check.sh for your lint/test commands"
 }
 
-[ $# -le 1 ] || usage
-
 if [ $# -eq 0 ]; then
     echo "${C_BOLD}No path given — opening folder picker...${C_RESET}"
     if picked="$(pick_folder)"; then
@@ -164,7 +225,9 @@ if [ $# -eq 0 ]; then
         exit 1
     fi
 elif [ "$1" = "--machine-setup" ]; then
-    machine_setup
+    [ $# -le 2 ] || usage
+    machine_setup "${2:-}"
 else
+    [ $# -eq 1 ] || usage
     init_project "$1"
 fi

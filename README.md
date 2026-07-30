@@ -74,7 +74,7 @@ Biến trợ lý AI của bạn (Cursor, Claude Code, Google Antigravity) thành
 
 ### 1. Setup (không cần copy tay)
 
-1. **1 lần / máy:** clone repo này, rồi chạy `./machine-setup.sh` (file riêng, gõ `./m` + Tab là ra, không cần nhớ flag gì cả). Lệnh này symlink `CLAUDE.md`/`GEMINI.md`/2 subagent/6 skill vào `~/.claude` và `~/.gemini`, để **mọi project trên máy** tự động có Iron Laws cơ bản + 6 skill, kể cả khi project đó chưa từng chạy bước 2 (chi tiết xem [claude-global-config/README.md](claude-global-config/README.md)).
+1. **1 lần / máy:** clone repo này, rồi chạy `./machine-setup.sh` (file riêng, gõ `./m` + Tab là ra, không cần nhớ flag gì cả). Không kèm gì thêm → tự bật hộp thoại cho chọn cài cho **Claude Code + Cursor** và/hoặc **Google Antigravity** (Cursor không có config riêng, ăn theo `~/.claude` nên gộp chung 1 lựa chọn). Muốn bỏ qua hộp thoại thì thêm `--claude-only` / `--antigravity-only` / `--all`. Chi tiết xem [claude-global-config/README.md](claude-global-config/README.md).
 2. **Mỗi project mới:** chạy `/path/to/antigravity-agent-framework/init.sh /path/to/your/project` — hoặc đơn giản hơn, chạy `init.sh` **không kèm path**, nó sẽ tự bật hộp thoại chọn thư mục (macOS: native Finder dialog qua `osascript`; Linux: `zenity`/`kdialog` nếu có) thay vì phải gõ/đi tìm đường dẫn tay. Lệnh này symlink phần dùng chung (`.agents/skills`, `.agents/workflows`, `generate_repomap.sh`) và sinh sẵn (nếu chưa có) `AGENTS.md`, `docs/ai/`, `.agents/scripts/pre_submit_check.sh` cho riêng project đó — an toàn để chạy lại nhiều lần, không bao giờ ghi đè file đã tuỳ biến.
 3. Mở `AGENTS.md` (vừa được sinh ra) và điền thông tin project của bạn.
 4. Mở `.agents/scripts/pre_submit_check.sh` và bỏ comment/cấu hình lệnh Test/Lint cho đúng ngôn ngữ dự án của bạn.
@@ -126,4 +126,5 @@ Nếu bạn có một Epic (tính năng lớn), đừng bắt AI code ngay. Hãy
 | AI sửa bừa không tìm root cause | *"Vi phạm: Chưa trace root cause. Quay lại bước phân tích."* |
 | AI tự ý sửa thêm thứ không yêu cầu | *"Vi phạm: Thay đổi tối thiểu. Revert và chỉ sửa cái tôi yêu cầu."* |
 | AI bịa đặt cấu trúc project | *"Chạy script `bash .agents/scripts/generate_repomap.sh` và đọc file `docs/ai/repomap.txt`"* |
+| AI đoán ý người dùng mà không hỏi | *"Vi phạm Luật Thép #5. Yêu cầu chưa rõ — hỏi lại trước khi làm, đừng đoán."* |
 | AI tự đặt tên role trùng 6 skill lõi | *"Vi phạm quy tắc `agent-` prefix. Đổi tên thư mục role, đừng đè symlink dùng chung."* |

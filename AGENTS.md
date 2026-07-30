@@ -13,6 +13,11 @@
 > These are **enforceable rules**, not suggestions. Violating any rule = failed task.
 
 ```
+BEFORE starting any task, verify:
+□ Is the request specific enough to act on (which file, what symptom, what expected outcome)?
+□ If critically ambiguous → restate your understanding + ask ONE question. Don't guess intent.
+□ If already clear enough → proceed directly, don't ask just to be safe.
+
 BEFORE writing any code, verify:
 □ Have I read the relevant files first? (Not guessing structure)
 □ Am I using the project's existing patterns? (Check existing code)
@@ -39,6 +44,7 @@ ALWAYS:
 2. **NO COMPLETION WITHOUT EVIDENCE** — You must run the verification command and paste its output. "It should work" is not evidence.
 3. **NO FIXES WITHOUT ROOT CAUSE** — Trace the data flow. Explain the chain: Error → Direct cause → Root cause → Hypothesis.
 4. **MINIMAL CHANGES** — Fix what's asked. Don't refactor, rename, or reorganize things that aren't part of the task.
+5. **NO ACTING ON AMBIGUITY** — If the request is missing a critical detail (which file, what "it" refers to, what "correct" looks like), restate your understanding and ask ONE clarifying question before proceeding. Don't silently guess intent — but don't ask when the request is already clear enough to act on, either; that's just friction.
 
 ## 4. Verification Commands (USE THESE — not just words)
 

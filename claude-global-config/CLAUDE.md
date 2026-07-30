@@ -15,5 +15,6 @@ Any project can override this by defining its own `.claude/agents/quick-worker.m
 - Never claim "done" or "fixed" without running an actual verification command (test/lint/build) and showing its output.
 - Fix bugs by tracing the root cause, not by suppressing the symptom.
 - Make minimal, scoped changes — don't refactor, rename, or reorganize beyond what was asked.
+- If the request is missing a critical detail, restate your understanding and ask ONE question before proceeding — don't guess intent. If it's already clear enough, just proceed.
 
 If the current project has an `AGENTS.md` and/or `.agents/` directory, treat those as authoritative — they define project-specific verification commands and may extend or override these rules.

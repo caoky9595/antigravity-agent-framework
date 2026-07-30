@@ -16,6 +16,12 @@ git clone https://github.com/caoky9595/antigravity-agent-framework.git ~/Desktop
 
 `machine-setup.sh` is its own file (not a flag on `init.sh`) specifically so it's tab-completable — nothing to remember, just `./m` + Tab. It's a thin wrapper around `init.sh --machine-setup`, which stays the single source of truth for the actual symlinking logic. Read `init.sh` at the repo root for the exact commands it runs — kept in one script rather than duplicated here in prose, so this doc can't drift out of sync with what it actually does.
 
+Run it with no arguments and it opens a native checklist dialog (macOS `osascript`, Linux `zenity`/`kdialog`, plain text prompts as a last resort) asking which of the two targets to wire up:
+- **Claude Code + Cursor (`~/.claude`)** — one option, not two: Cursor has no config of its own here, it only piggybacks on Claude Code's `~/.claude/{agents,skills}`, so there's no way to enable one without the other.
+- **Google Antigravity (`~/.gemini`)** — independent of the above.
+
+To skip the dialog (scripting, repeat runs): `./machine-setup.sh --claude-only`, `--antigravity-only`, or `--all`.
+
 If any of these targets already exist as a **real file** (not a symlink), `init.sh` will skip it and print a warning rather than overwrite it — back up or remove the existing file, then re-run.
 
 ## Troubleshooting
